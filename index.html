@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthGuard – Your Emergency Health Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --red: #E63946;
+    --red-dark: #b5202c;
+    --red-light: #fce8ea;
+    --teal: #0D9488;
+    --teal-light: #ccfbf1;
+    --teal-dark: #0a7466;
+    --navy: #0F172A;
+    --navy-mid: #1E293B;
+    --slate: #334155;
+    --muted: #64748B;
+    --border: #E2E8F0;
+    --bg: #F8FAFC;
+    --white: #FFFFFF;
+    --amber: #F59E0B;
+    --amber-light: #fef3c7;
+    --green: #10B981;
+    --green-light: #d1fae5;
+    --purple: #8B5CF6;
+    --purple-light: #ede9fe;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.14);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--navy);
+    color: white;
+    padding: 8px 24px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topbar-emergency {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .topbar-emergency a {
+    color: var(--red);
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* NAVBAR */
+  .navbar {
+    background: var(--white);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 1px 0 var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--red), #ff6b6b);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(230,57,70,0.35);
+  }
+  .logo span { color: var(--red); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+  }
+  .nav-links a {
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    background: var(--red-light);
+    color: var(--red);
+  }
+  .nav-cta {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .btn {
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--red), #ff4d58);
+    color: white;
+    box-shadow: 0 4px 14px rgba(230,57,70,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(230,57,70,0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { background: var(--bg); }
+  .btn-teal {
+    background: linear-gradient(135deg, var(--teal), #0ea5e9);
+    color: white;
+    box-shadow: 0 4px 14px rgba(13,148,136,0.3);
+  }
+  .btn-teal:hover { transform: translateY(-1px); }
+  .btn-green {
+    background: linear-gradient(135deg, var(--green), #34d399);
+    color: white;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+  }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 12px; }
+
+  /* PAGE SECTIONS */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0D1B2A 100%);
+    padding: 80px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(230,57,70,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(13,148,136,0.1) 0%, transparent 60%);
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(230,57,70,0.15);
+    border: 1px solid rgba(230,57,70,0.3);
+    color: #ff8a93;
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .pulse-dot {
+    width: 7px; height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.4); }
+  }
+  .hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 800;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .hero h1 .accent { color: var(--red); }
+  .hero h1 .accent2 { color: #5eead4; }
+  .hero-sub {
+    color: #94a3b8;
+    font-size: 18px;
+    max-width: 560px;
+    margin: 0 auto 36px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 60px;
+    position: relative;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+  }
+  .stat-num .unit { color: var(--red); }
+  .stat-label { color: #64748b; font-size: 13px; margin-top: 4px; }
+
+  /* FEATURES GRID */
+  .section { padding: 60px 32px; max-width: 1200px; margin: 0 auto; }
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .section-sub { color: var(--muted); margin-bottom: 40px; font-size: 16px; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: transparent;
+  }
+  .feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .icon-red { background: var(--red-light); color: var(--red); }
+  .icon-teal { background: var(--teal-light); color: var(--teal); }
+  .icon-amber { background: var(--amber-light); color: var(--amber); }
+  .icon-green { background: var(--green-light); color: var(--green); }
+  .icon-purple { background: var(--purple-light); color: var(--purple); }
+  .icon-navy { background: #e8edf5; color: var(--navy); }
+
+  .feature-card h3 { font-weight: 700; margin-bottom: 8px; font-size: 17px; }
+  .feature-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+  /* DASHBOARD LAYOUT */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 120px);
+  }
+  .sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  .sidebar-section { margin-bottom: 8px; }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 12px;
+    margin-bottom: 6px;
+    margin-top: 20px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--slate);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--navy); }
+  .sidebar-item.active { background: var(--red-light); color: var(--red); font-weight: 600; }
+  .sidebar-item i { width: 18px; text-align: center; font-size: 15px; }
+
+  .main-content { padding: 32px; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* FORM ELEMENTS */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { margin-bottom: 0; }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--red);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  /* BLOOD GROUP SELECTOR */
+  .blood-group-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .blood-btn {
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    color: var(--navy);
+  }
+  .blood-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .blood-btn.selected { background: var(--red); color: white; border-color: var(--red); box-shadow: 0 4px 12px rgba(230,57,70,0.35); }
+
+  /* CONDITION TAGS */
+  .conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .condition-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--bg);
+    color: var(--slate);
+    user-select: none;
+  }
+  .condition-chip:hover { border-color: var(--red); color: var(--red); }
+  .condition-chip.selected { border-color: var(--red); background: var(--red-light); color: var(--red); font-weight: 600; }
+  .condition-chip input[type=checkbox] { display: none; }
+  .condition-chip i { font-size: 16px; }
+
+  /* QR CODE */
+  .qr-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  #qrcode canvas, #qrcode img {
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+  .qr-info-card {
+    background: var(--navy);
+    color: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .qr-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 13px;
+  }
+  .qr-field:last-child { border-bottom: none; }
+  .qr-field-label { color: #94a3b8; width: 130px; flex-shrink: 0; }
+  .qr-field-val { font-weight: 600; }
+
+  /* NEARBY HOSPITALS */
+  .hospital-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    background: var(--white);
+    transition: all 0.2s;
+  }
+  .hospital-card:hover { border-color: var(--teal); box-shadow: 0 4px 12px rgba(13,148,136,0.12); }
+  .hospital-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .hosp-govt { background: var(--teal-light); color: var(--teal); }
+  .hosp-private { background: var(--purple-light); color: var(--purple); }
+  .hospital-info { flex: 1; }
+  .hospital-info h4 { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .hospital-info p { color: var(--muted); font-size: 13px; }
+  .hospital-meta { display: flex; gap: 12px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-govt { background: var(--teal-light); color: var(--teal); }
+  .badge-private { background: var(--purple-light); color: var(--purple); }
+  .badge-dist { background: var(--amber-light); color: var(--amber); }
+  .badge-open { background: var(--green-light); color: var(--green); }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: var(--teal);
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+  /* MAP */
+  #map {
+    width: 100%;
+    height: 400px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #e8f0fe;
+    overflow: hidden;
+    position: relative;
+  }
+  .map-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+    background: linear-gradient(135deg, #e8f4fd, #d1e8ff);
+  }
+  .map-placeholder i { font-size: 48px; color: var(--teal); }
+
+  /* EMERGENCY CONTACTS */
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background: var(--white);
+  }
+  .contact-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--red), #ff6b6b);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .contact-info { flex: 1; }
+  .contact-info h4 { font-weight: 600; font-size: 14px; }
+  .contact-info p { color: var(--muted); font-size: 13px; }
+  .contact-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+  .icon-btn.call:hover { background: var(--green-light); color: var(--green); border-color: var(--green); }
+
+  /* HEALTH PLAN */
+  .plan-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+  .plan-tab {
+    flex: 1;
+    padding: 9px 16px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .plan-tab.active { background: white; color: var(--navy); box-shadow: var(--shadow-sm); }
+
+  .plan-content { display: none; }
+  .plan-content.active { display: block; }
+
+  .plan-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .plan-item:last-child { border-bottom: none; }
+  .plan-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--teal-light);
+    color: var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px;
+    flex-shrink: 0;
+  }
+  .plan-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .plan-item p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--amber-light);
+    color: var(--amber);
+    margin-top: 6px;
+  }
+
+  /* PROFILE OVERVIEW */
+  .profile-hero {
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: var(--radius);
+    padding: 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .profile-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--red), #ff6b6b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 3px solid rgba(255,255,255,0.2);
+  }
+  .profile-name { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 700; }
+  .profile-sub { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+  .profile-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .profile-tag {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag-blood { background: rgba(230,57,70,0.25); color: #ff8a93; }
+  .tag-age { background: rgba(13,148,136,0.25); color: #5eead4; }
+  .tag-condition { background: rgba(139,92,246,0.25); color: #c4b5fd; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .stat-card-label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+  .stat-card-icon { font-size: 22px; margin-bottom: 8px; }
+
+  /* NOTIFICATIONS */
+  .notif {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    align-items: flex-start;
+  }
+  .notif-warn { background: var(--amber-light); border-color: #fcd34d; }
+  .notif-info { background: var(--teal-light); border-color: #6ee7b7; }
+  .notif-danger { background: var(--red-light); border-color: #fca5a5; }
+  .notif i { font-size: 16px; margin-top: 1px; }
+  .notif-warn i { color: var(--amber); }
+  .notif-info i { color: var(--teal); }
+  .notif-danger i { color: var(--red); }
+  .notif p { font-size: 13px; line-height: 1.5; }
+  .notif strong { display: block; margin-bottom: 3px; font-size: 14px; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 520px;
+    width: calc(100% - 32px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .modal-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .modal-close:hover { background: var(--red-light); color: var(--red); }
+
+  /* TOAST */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 3000; }
+  .toast {
+    background: var(--navy);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+    min-width: 260px;
+  }
+  .toast.success { border-left: 4px solid var(--green); }
+  .toast.error { border-left: 4px solid var(--red); }
+  .toast.info { border-left: 4px solid var(--teal); }
+  @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* HEALTH METRICS */
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    background: var(--white);
+    text-align: center;
+  }
+  .metric-val { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .metric-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .metric-unit { font-size: 13px; font-weight: 400; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* USER SECTION (show when logged in) */
+  .logged-in-only { display: none; }
+  .logged-out-only { display: block; }
+  body.logged-in .logged-in-only { display: flex; }
+  body.logged-in .logged-out-only { display: none; }
+  body.logged-in .dashboard-page { display: grid; }
+
+  .section-header { margin-bottom: 32px; }
+
+  /* LOCATION STATUS */
+  .location-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* FOOTER */
+  .footer {
+    background: var(--navy);
+    color: #64748b;
+    text-align: center;
+    padding: 24px;
+    font-size: 13px;
+  }
+  .footer span { color: var(--red); }
+
+  @media (max-width: 768px) {
+    .dashboard { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid-3 { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .metric-row { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 24px; }
+    .blood-group-grid { grid-template-columns: repeat(4, 1fr); }
+    .navbar { padding: 0 16px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-emergency">
+    <span>🚨 Emergency?</span>
+    <a href="tel:112"><i class="fas fa-phone"></i> 112 – Emergency</a>
+    <a href="tel:102"><i class="fas fa-ambulance"></i> 102 – Ambulance</a>
+    <a href="tel:104"><i class="fas fa-heartbeat"></i> 104 – Health Helpline</a>
+  </div>
+  <div style="font-size:12px; color:#64748b">HealthGuard – Your Life, Protected</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="logo" onclick="showPage('home')">
+    <div class="logo-icon"><i class="fas fa-shield-heart"></i></div>
+    Health<span>Guard</span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('features')" id="nav-features">Features</a></li>
+    <li><a onclick="requireLogin('dashboard')" id="nav-dashboard">My Health</a></li>
+    <li><a onclick="requireLogin('hospitals')" id="nav-hospitals">Find Hospitals</a></li>
+    <li><a onclick="requireLogin('wellness')" id="nav-wellness">Wellness Plan</a></li>
+  </ul>
+  <div class="nav-cta">
+    <div class="logged-out-only">
+      <button class="btn btn-outline" onclick="openModal('loginModal')">Sign In</button>
+      <button class="btn btn-primary" onclick="openModal('registerModal')" style="margin-left:8px"><i class="fas fa-user-plus"></i> Register Free</button>
+    </div>
+    <div class="logged-in-only" style="align-items:center; gap:10px;">
+      <button class="btn btn-outline btn-sm" onclick="requireLogin('hospitals')"><i class="fas fa-location-dot"></i> Find Hospitals</button>
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),#ff6b6b);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;" onclick="requireLogin('dashboard')" id="navAvatar">U</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ======== PAGE: HOME ======== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge"><div class="pulse-dot"></div> India's #1 Emergency Health Platform</div>
+    <h1>Your Health Profile,<br><span class="accent">Ready When</span><br><span class="accent2">Life Isn't</span></h1>
+    <p class="hero-sub">Store your blood group, critical conditions & emergency contacts. One QR scan gives doctors your complete health history — anywhere, anytime.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" onclick="openModal('registerModal')"><i class="fas fa-shield-heart"></i> Create Health Profile</button>
+      <button class="btn btn-lg" style="background:rgba(255,255,255,0.1);color:white;border:1.5px solid rgba(255,255,255,0.2);" onclick="showPage('features')"><i class="fas fa-play-circle"></i> See How It Works</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">QR<span class="unit">✓</span></div><div class="stat-label">Instant Medical ID</div></div>
+      <div class="stat"><div class="stat-num">24<span class="unit">×7</span></div><div class="stat-label">Emergency Access</div></div>
+      <div class="stat"><div class="stat-num">500<span class="unit">+</span></div><div class="stat-label">Hospitals Mapped</div></div>
+      <div class="stat"><div class="stat-num">100<span class="unit">%</span></div><div class="stat-label">Free to Use</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Everything you need in an emergency</div>
+      <div class="section-sub">Built for India — works in every city, every situation.</div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" onclick="openModal('registerModal')">
+        <div class="feature-icon icon-red"><i class="fas fa-id-card-clip"></i></div>
+        <h3>Digital Health Profile</h3>
+        <p>Store blood group, allergies, chronic conditions, medications & more in one secure place.</p>
+      </div>
+      <div class="feature-card" onclick="openModal('registerModal')">
+        <div class="feature-icon icon-teal"><i class="fas fa-qrcode"></i></div>
+        <h3>Emergency QR Code</h3>
+        <p>Your unique QR card gives doctors instant access to your critical health data — no login needed for them.</p>
+      </div>
+      <div class="feature-card" onclick="requireLogin('hospitals')">
+        <div class="feature-icon icon-amber"><i class="fas fa-hospital-user"></i></div>
+        <h3>Nearby Hospitals</h3>
+        <p>Find government & private hospitals near you with GPS navigation and distance info.</p>
+      </div>
+      <div class="feature-card" onclick="openModal('registerModal')">
+        <div class="feature-icon icon-green"><i class="fas fa-phone-volume"></i></div>
+        <h3>Emergency Contacts</h3>
+        <p>Save family & friends as emergency contacts. Doctors can reach them instantly during a crisis.</p>
+      </div>
+      <div class="feature-card" onclick="requireLogin('wellness')">
+        <div class="feature-icon icon-purple"><i class="fas fa-person-walking"></i></div>
+        <h3>AI Wellness Plans</h3>
+        <p>Get personalized diet, exercise & meditation plans based on your health conditions.</p>
+      </div>
+      <div class="feature-card" onclick="openModal('registerModal')">
+        <div class="feature-icon icon-navy"><i class="fas fa-shield-check"></i></div>
+        <h3>Secure & Private</h3>
+        <p>Your data is encrypted and only you control who can access your health information.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: FEATURES ======== -->
+<div class="page" id="page-features">
+  <div style="background:linear-gradient(135deg,#0F172A,#1E293B);padding:60px 32px;text-align:center;">
+    <h1 style="font-family:'Sora',sans-serif;font-size:40px;font-weight:800;color:white;margin-bottom:12px;">How HealthGuard Works</h1>
+    <p style="color:#94a3b8;font-size:18px;">Three simple steps to complete health protection</p>
+  </div>
+  <div class="section">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;margin-bottom:60px;">
+      <div style="text-align:center;padding:32px;">
+        <div style="width:64px;height:64px;background:var(--red-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;"><i class="fas fa-user-plus" style="color:var(--red)"></i></div>
+        <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px;">STEP 1</div>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">Create Your Profile</h3>
+        <p style="color:var(--muted);line-height:1.7">Register and fill in your blood group, medical conditions, allergies, medications, and emergency contacts.</p>
+      </div>
+      <div style="text-align:center;padding:32px;">
+        <div style="width:64px;height:64px;background:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;"><i class="fas fa-qrcode" style="color:var(--teal)"></i></div>
+        <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px;">STEP 2</div>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">Get Your QR Code</h3>
+        <p style="color:var(--muted);line-height:1.7">Your personalized QR code is generated instantly. Print it, save it on your phone, or wear it on a wristband.</p>
+      </div>
+      <div style="text-align:center;padding:32px;">
+        <div style="width:64px;height:64px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;"><i class="fas fa-shield-heart" style="color:var(--green)"></i></div>
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">STEP 3</div>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:10px;">Stay Protected</h3>
+        <p style="color:var(--muted);line-height:1.7">In any emergency, doctors scan your QR code and instantly know your complete medical history — saving critical time.</p>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn btn-primary btn-lg" onclick="openModal('registerModal')"><i class="fas fa-shield-heart"></i> Start Free – Create Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: DASHBOARD ======== -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div style="padding:0 12px;margin-bottom:20px;">
+        <div style="font-size:13px;color:var(--muted);">Welcome back,</div>
+        <div style="font-weight:700;font-size:16px;" id="sidebarName">User</div>
+      </div>
+      <div class="sidebar-label">Health</div>
+      <a class="sidebar-item active" onclick="showDashTab('overview')"><i class="fas fa-house-medical"></i> Overview</a>
+      <a class="sidebar-item" onclick="showDashTab('profile')"><i class="fas fa-user-nurse"></i> Health Profile</a>
+      <a class="sidebar-item" onclick="showDashTab('qr')"><i class="fas fa-qrcode"></i> My QR Code</a>
+      <div class="sidebar-label">Emergency</div>
+      <a class="sidebar-item" onclick="showPage('hospitals')"><i class="fas fa-hospital"></i> Nearby Hospitals</a>
+      <a class="sidebar-item" onclick="showDashTab('contacts')"><i class="fas fa-address-book"></i> Emergency Contacts</a>
+      <div class="sidebar-label">Wellness</div>
+      <a class="sidebar-item" onclick="showPage('wellness')"><i class="fas fa-apple-whole"></i> Wellness Plan</a>
+      <div class="sidebar-label">Account</div>
+      <a class="sidebar-item" onclick="logout()" style="color:var(--red)"><i class="fas fa-right-from-bracket"></i> Sign Out</a>
+    </aside>
+    <div class="main-content" id="dashboardContent">
+      <!-- Content injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: HOSPITALS ======== -->
+<div class="page" id="page-hospitals">
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div style="padding:0 12px;margin-bottom:20px;">
+        <div style="font-weight:700;font-size:16px;">Find Care</div>
+        <div style="font-size:13px;color:var(--muted);">Near your location</div>
+      </div>
+      <a class="sidebar-item active" onclick="filterHospitals('all')"><i class="fas fa-hospital"></i> All Hospitals</a>
+      <a class="sidebar-item" onclick="filterHospitals('government')"><i class="fas fa-landmark"></i> Government Only</a>
+      <a class="sidebar-item" onclick="filterHospitals('private')"><i class="fas fa-building"></i> Private Only</a>
+      <div class="sidebar-label">Emergency Services</div>
+      <a class="sidebar-item" onclick="filterHospitals('emergency')"><i class="fas fa-truck-medical"></i> 24×7 Emergency</a>
+      <a class="sidebar-item" onclick="filterHospitals('cardiac')"><i class="fas fa-heart-pulse"></i> Cardiac Care</a>
+      <a class="sidebar-item" onclick="filterHospitals('trauma')"><i class="fas fa-bandage"></i> Trauma Center</a>
+      <div class="sidebar-label">Navigation</div>
+      <a class="sidebar-item" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </aside>
+    <div class="main-content">
+      <div class="card-header" style="margin-bottom:20px;">
+        <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700;">Nearby Hospitals</h2>
+        <button class="btn btn-teal" onclick="getLocation()"><i class="fas fa-location-dot"></i> Use My Location</button>
+      </div>
+      <div class="location-status" id="locationStatus" style="display:none;">
+        <i class="fas fa-location-dot"></i> <span id="locationText">Detecting location...</span>
+      </div>
+      <div id="map">
+        <div class="map-placeholder">
+          <i class="fas fa-map-location-dot"></i>
+          <div style="font-size:16px;font-weight:600;">Click "Use My Location" to find nearby hospitals</div>
+          <div style="font-size:13px;">We'll show hospitals on the map and list below</div>
+          <button class="btn btn-teal" onclick="getLocation()" style="margin-top:8px"><i class="fas fa-location-dot"></i> Use My Location</button>
+        </div>
+      </div>
+      <div style="margin-top:20px;" id="hospitalList">
+        <div style="text-align:center;padding:40px;color:var(--muted);">
+          <i class="fas fa-hospital" style="font-size:40px;display:block;margin-bottom:12px;color:var(--border)"></i>
+          Enable location to see nearby hospitals
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PAGE: WELLNESS ======== -->
+<div class="page" id="page-wellness">
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div style="padding:0 12px;margin-bottom:20px;">
+        <div style="font-weight:700;font-size:16px;">Wellness Center</div>
+        <div style="font-size:13px;color:var(--muted);">Your personalized plan</div>
+      </div>
+      <a class="sidebar-item active" onclick="showWellnessTab('diet')"><i class="fas fa-apple-whole"></i> Diet Plan</a>
+      <a class="sidebar-item" onclick="showWellnessTab('exercise')"><i class="fas fa-dumbbell"></i> Exercise Plan</a>
+      <a class="sidebar-item" onclick="showWellnessTab('meditation')"><i class="fas fa-spa"></i> Meditation</a>
+      <div class="sidebar-label">Navigation</div>
+      <a class="sidebar-item" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </aside>
+    <div class="main-content" id="wellnessContent">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ======== MODALS ======== -->
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-shield-heart" style="color:var(--red)"></i> Create Health Profile</div>
+      <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+    </div>
+
+    <!-- Step 1: Basic Info -->
+    <div id="regStep1">
+      <div class="notif notif-info" style="margin-bottom:20px;">
+        <i class="fas fa-circle-info"></i>
+        <p><strong>Why we need this</strong> This data is used only to help you and emergency responders. It's never shared without your consent.</p>
+      </div>
+      <div class="form-grid" style="margin-bottom:16px;">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="reg_name" placeholder="e.g. Rajan Sharma">
+        </div>
+        <div class="form-group">
+          <label>Age *</label>
+          <input type="number" id="reg_age" placeholder="e.g. 32" min="1" max="120">
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="reg_phone" placeholder="+91 9876543210">
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="reg_gender">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" id="reg_height" placeholder="e.g. 168">
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" id="reg_weight" placeholder="e.g. 70">
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label>Blood Group *</label>
+        <div class="blood-group-grid" id="bloodGroupGrid">
+          <button class="blood-btn" onclick="selectBlood(this,'A+')">A+</button>
+          <button class="blood-btn" onclick="selectBlood(this,'A-')">A−</button>
+          <button class="blood-btn" onclick="selectBlood(this,'B+')">B+</button>
+          <button class="blood-btn" onclick="selectBlood(this,'B-')">B−</button>
+          <button class="blood-btn" onclick="selectBlood(this,'AB+')">AB+</button>
+          <button class="blood-btn" onclick="selectBlood(this,'AB-')">AB−</button>
+          <button class="blood-btn" onclick="selectBlood(this,'O+')">O+</button>
+          <button class="blood-btn" onclick="selectBlood(this,'O-')">O−</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="regStep1()">Next: Medical Conditions <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <!-- Step 2: Conditions -->
+    <div id="regStep2" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <div style="font-weight:700;margin-bottom:6px;">Known Medical Conditions <span style="color:var(--muted);font-weight:400;font-size:13px">(Select all that apply)</span></div>
+        <div class="conditions-grid">
+          <label class="condition-chip"><input type="checkbox" value="Diabetes (Type 1)"><i class="fas fa-syringe"></i> Diabetes Type 1</label>
+          <label class="condition-chip"><input type="checkbox" value="Diabetes (Type 2)"><i class="fas fa-droplet"></i> Diabetes Type 2</label>
+          <label class="condition-chip"><input type="checkbox" value="Heart Disease"><i class="fas fa-heart-pulse"></i> Heart Disease</label>
+          <label class="condition-chip"><input type="checkbox" value="Hypertension"><i class="fas fa-gauge-high"></i> Hypertension</label>
+          <label class="condition-chip"><input type="checkbox" value="Asthma"><i class="fas fa-lungs"></i> Asthma</label>
+          <label class="condition-chip"><input type="checkbox" value="Epilepsy"><i class="fas fa-brain"></i> Epilepsy</label>
+          <label class="condition-chip"><input type="checkbox" value="Kidney Disease"><i class="fas fa-bacteria"></i> Kidney Disease</label>
+          <label class="condition-chip"><input type="checkbox" value="Thyroid Disorder"><i class="fas fa-shield-virus"></i> Thyroid</label>
+          <label class="condition-chip"><input type="checkbox" value="Arthritis"><i class="fas fa-bone"></i> Arthritis</label>
+          <label class="condition-chip"><input type="checkbox" value="Cancer"><i class="fas fa-ribbon"></i> Cancer</label>
+          <label class="condition-chip"><input type="checkbox" value="Blood Pressure"><i class="fas fa-stethoscope"></i> Blood Pressure</label>
+          <label class="condition-chip"><input type="checkbox" value="None"><i class="fas fa-check-circle"></i> No Conditions</label>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-bottom:16px;">
+        <div class="form-group full">
+          <label>Known Allergies</label>
+          <input type="text" id="reg_allergies" placeholder="e.g. Penicillin, Peanuts, Dust (comma separated)">
+        </div>
+        <div class="form-group full">
+          <label>Current Medications</label>
+          <textarea id="reg_medications" placeholder="e.g. Metformin 500mg twice daily, Aspirin 75mg..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Doctor's Name & Contact</label>
+          <input type="text" id="reg_doctor" placeholder="e.g. Dr. Priya Nair – 9876543210">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="showRegStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button class="btn btn-primary" style="flex:1" onclick="regStep2()">Next: Emergency Contacts <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Emergency Contacts -->
+    <div id="regStep3" style="display:none;">
+      <div style="font-weight:700;margin-bottom:16px;">Emergency Contacts <span style="color:var(--muted);font-weight:400;font-size:13px">(Add up to 3)</span></div>
+      <div id="emergencyContactsReg">
+        <div class="form-grid" style="margin-bottom:12px;" id="contact_0">
+          <div class="form-group"><label>Name</label><input type="text" id="ec_name_0" placeholder="Contact name"></div>
+          <div class="form-group"><label>Relationship</label><select id="ec_rel_0"><option>Spouse</option><option>Parent</option><option>Sibling</option><option>Child</option><option>Friend</option><option>Other</option></select></div>
+          <div class="form-group full"><label>Phone Number</label><input type="tel" id="ec_phone_0" placeholder="+91 ..."></div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="addContactField()" style="margin-bottom:20px"><i class="fas fa-plus"></i> Add Another</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="showRegStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button class="btn btn-primary" style="flex:1" onclick="completeRegistration()"><i class="fas fa-check"></i> Create My Health Profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">Sign In to HealthGuard</div>
+      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>Phone Number</label>
+      <input type="tel" id="login_phone" placeholder="+91 9876543210">
+    </div>
+    <div class="form-group" style="margin-bottom:20px;">
+      <label>Password</label>
+      <input type="password" id="login_pass" placeholder="Enter password">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:14px;" onclick="doLogin()">Sign In</button>
+    <div style="text-align:center;font-size:13px;color:var(--muted);">Don't have an account? <a onclick="closeModal('loginModal');openModal('registerModal')" style="color:var(--red);cursor:pointer;font-weight:600">Create Profile</a></div>
+    <div class="divider"></div>
+    <button class="btn btn-outline" style="width:100%;font-size:13px;" onclick="demoLogin()"><i class="fas fa-eye"></i> Try Demo Account</button>
+  </div>
+</div>
+
+<!-- ADD CONTACT MODAL -->
+<div class="modal-overlay" id="addContactModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">Add Emergency Contact</div>
+      <button class="modal-close" onclick="closeModal('addContactModal')">✕</button>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>Full Name *</label>
+      <input type="text" id="nc_name" placeholder="Contact name">
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label>Relationship</label>
+      <select id="nc_rel">
+        <option>Spouse</option><option>Parent</option><option>Sibling</option><option>Child</option><option>Friend</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:20px;">
+      <label>Phone Number *</label>
+      <input type="tel" id="nc_phone" placeholder="+91 9876543210">
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="saveNewContact()">Save Contact</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>© 2025 HealthGuard — Built for India's emergency healthcare needs.<br>
+  Emergency: <span>112</span> | Ambulance: <span>102</span> | Health Helpline: <span>104</span><br>
+  <small style="color:#475569">This platform provides health information support. Always consult a qualified medical professional.</small></p>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null;
+let selectedBloodGroup = '';
+let contactCount = 1;
+let currentDashTab = 'overview';
+let currentWellnessTab = 'diet';
+let hospitalFilter = 'all';
+
+const DEMO_USER = {
+  name: 'Rajan Sharma',
+  age: 35,
+  phone: '+91 9876543210',
+  gender: 'Male',
+  height: 172,
+  weight: 78,
+  bloodGroup: 'B+',
+  conditions: ['Diabetes (Type 2)', 'Hypertension'],
+  allergies: 'Penicillin, Dust',
+  medications: 'Metformin 500mg twice daily\nAmlodipine 5mg once daily',
+  doctor: 'Dr. Priya Nair – 9845123456',
+  emergencyContacts: [
+    { name: 'Sunita Sharma', relation: 'Spouse', phone: '+91 9812345678' },
+    { name: 'Mohan Sharma', relation: 'Parent', phone: '+91 9934567890' }
+  ],
+  id: 'HG-2025-RS-001'
+};
+
+// ============================================================
+// PAGE NAVIGATION
+// ============================================================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'wellness') renderWellness();
+}
+
+function requireLogin(page) {
+  if (!currentUser) {
+    openModal('loginModal');
+    return;
+  }
+  showPage(page);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function doLogin() {
+  const phone = document.getElementById('login_phone').value;
+  if (!phone) { showToast('Please enter your phone number', 'error'); return; }
+  // Simulate login with demo user
+  loginUser(DEMO_USER);
+  closeModal('loginModal');
+  showToast('Welcome back, ' + DEMO_USER.name.split(' ')[0] + '! 👋', 'success');
+}
+
+function demoLogin() {
+  loginUser(DEMO_USER);
+  closeModal('loginModal');
+  showToast('Demo mode activated! 👋', 'info');
+  showPage('dashboard');
+}
+
+function loginUser(user) {
+  currentUser = user;
+  document.body.classList.add('logged-in');
+  document.getElementById('navAvatar').textContent = user.name.charAt(0);
+  document.getElementById('sidebarName').textContent = user.name.split(' ')[0];
+}
+
+function logout() {
+  currentUser = null;
+  document.body.classList.remove('logged-in');
+  showPage('home');
+  showToast('You have been signed out.', 'info');
+}
+
+// ============================================================
+// REGISTRATION
+// ============================================================
+let regData = {};
+
+function selectBlood(btn, group) {
+  document.querySelectorAll('.blood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedBloodGroup = group;
+}
+
+function regStep1() {
+  const name = document.getElementById('reg_name').value.trim();
+  const age = document.getElementById('reg_age').value;
+  const phone = document.getElementById('reg_phone').value.trim();
+  if (!name || !age || !phone || !selectedBloodGroup) {
+    showToast('Please fill in all required fields and select blood group', 'error'); return;
+  }
+  regData = { name, age, phone, gender: document.getElementById('reg_gender').value,
+    height: document.getElementById('reg_height').value, weight: document.getElementById('reg_weight').value,
+    bloodGroup: selectedBloodGroup };
+  showRegStep(2);
+}
+
+function regStep2() {
+  const conditions = Array.from(document.querySelectorAll('.condition-chip input:checked')).map(c => c.value);
+  regData.conditions = conditions;
+  regData.allergies = document.getElementById('reg_allergies').value;
+  regData.medications = document.getElementById('reg_medications').value;
+  regData.doctor = document.getElementById('reg_doctor').value;
+  showRegStep(3);
+}
+
+function showRegStep(n) {
+  [1,2,3].forEach(i => document.getElementById('regStep' + i).style.display = i===n ? 'block' : 'none');
+}
+
+let ecCount = 1;
+function addContactField() {
+  if (ecCount >= 3) { showToast('Maximum 3 emergency contacts allowed', 'info'); return; }
+  const div = document.createElement('div');
+  div.className = 'form-grid'; div.style.marginBottom = '12px'; div.id = 'contact_' + ecCount;
+  div.innerHTML = `<div class="form-group"><label>Name</label><input type="text" id="ec_name_${ecCount}" placeholder="Contact name"></div>
+    <div class="form-group"><label>Relationship</label><select id="ec_rel_${ecCount}"><option>Spouse</option><option>Parent</option><option>Sibling</option><option>Child</option><option>Friend</option><option>Other</option></select></div>
+    <div class="form-group full"><label>Phone Number</label><input type="tel" id="ec_phone_${ecCount}" placeholder="+91 ..."></div>`;
+  document.getElementById('emergencyContactsReg').appendChild(div);
+  ecCount++;
+}
+
+function completeRegistration() {
+  const contacts = [];
+  for (let i = 0; i < ecCount; i++) {
+    const n = document.getElementById('ec_name_' + i);
+    const p = document.getElementById('ec_phone_' + i);
+    if (n && n.value) contacts.push({ name: n.value, relation: document.getElementById('ec_rel_' + i).value, phone: p ? p.value : '' });
+  }
+  regData.emergencyContacts = contacts;
+  regData.id = 'HG-2025-' + Math.random().toString(36).substr(2,6).toUpperCase();
+  loginUser(regData);
+  closeModal('registerModal');
+  showToast('Health profile created! Welcome, ' + regData.name.split(' ')[0] + ' 🎉', 'success');
+  showPage('dashboard');
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function showDashTab(tab) {
+  currentDashTab = tab;
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  renderDashboard();
+}
+
+function renderDashboard() {
+  if (!currentUser) return;
+  const u = currentUser;
+  const content = document.getElementById('dashboardContent');
+  if (!content) return;
+
+  if (currentDashTab === 'overview') {
+    content.innerHTML = `
+      <div class="profile-hero">
+        <div class="profile-avatar">${u.name.charAt(0)}</div>
+        <div>
+          <div class="profile-name">${u.name}</div>
+          <div class="profile-sub">${u.gender || '—'} · ${u.age} years · ID: ${u.id || 'N/A'}</div>
+          <div class="profile-tags">
+            <span class="profile-tag tag-blood">🩸 ${u.bloodGroup}</span>
+            <span class="profile-tag tag-age">📅 Age ${u.age}</span>
+            ${(u.conditions||[]).filter(c=>c!=='None').map(c=>`<span class="profile-tag tag-condition">⚠ ${c}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-card-icon" style="color:var(--red)">🩸</div><div class="stat-card-num">${u.bloodGroup}</div><div class="stat-card-label">Blood Group</div></div>
+        <div class="stat-card"><div class="stat-card-icon" style="color:var(--teal)">🏥</div><div class="stat-card-num">${(u.conditions||[]).filter(c=>c!=='None').length}</div><div class="stat-card-label">Conditions</div></div>
+        <div class="stat-card"><div class="stat-card-icon" style="color:var(--amber)">📞</div><div class="stat-card-num">${(u.emergencyContacts||[]).length}</div><div class="stat-card-label">Emergency Contacts</div></div>
+        <div class="stat-card"><div class="stat-card-icon" style="color:var(--green)">✅</div><div class="stat-card-num">QR</div><div class="stat-card-label">ID Ready</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;"><i class="fas fa-triangle-exclamation" style="color:var(--amber)"></i> Health Alerts</div>
+          ${(u.conditions||[]).includes('Diabetes (Type 2)') ? `<div class="notif notif-warn"><i class="fas fa-syringe"></i><p><strong>Diabetes Management</strong> Monitor blood sugar regularly. Keep glucose tablets handy.</p></div>` : ''}
+          ${(u.conditions||[]).includes('Hypertension') ? `<div class="notif notif-danger"><i class="fas fa-gauge-high"></i><p><strong>Hypertension Alert</strong> Avoid high-sodium foods. Take BP medications on time.</p></div>` : ''}
+          ${(u.conditions||[]).includes('Heart Disease') ? `<div class="notif notif-danger"><i class="fas fa-heart-pulse"></i><p><strong>Cardiac Alert</strong> Keep emergency medication handy. Know nearest cardiac hospital.</p></div>` : ''}
+          ${(u.conditions||[]).filter(c=>c!=='None').length === 0 ? `<div class="notif notif-info"><i class="fas fa-check-circle"></i><p><strong>Looking Good!</strong> No major health conditions recorded. Keep up healthy habits!</p></div>` : ''}
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;"><i class="fas fa-address-book" style="color:var(--teal)"></i> Emergency Contacts</div>
+          ${(u.emergencyContacts||[]).map(c => `
+            <div class="contact-card">
+              <div class="contact-avatar">${c.name.charAt(0)}</div>
+              <div class="contact-info"><h4>${c.name}</h4><p>${c.relation} · ${c.phone}</p></div>
+              <a href="tel:${c.phone}" class="nav-btn btn-sm"><i class="fas fa-phone"></i></a>
+            </div>`).join('') || '<p style="color:var(--muted);font-size:14px">No contacts added yet.</p>'}
+          <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="openModal('addContactModal')"><i class="fas fa-plus"></i> Add Contact</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:0">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-qrcode" style="color:var(--navy)"></i> Your Emergency QR Code</div>
+          <button class="btn btn-primary btn-sm" onclick="showDashTab('qr')">View Full QR</button>
+        </div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Doctors scan this to instantly see your medical history, blood group, allergies and emergency contacts.</p>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" onclick="showDashTab('qr')"><i class="fas fa-qrcode"></i> Generate QR Code</button>
+          <button class="btn btn-teal" onclick="showPage('hospitals')"><i class="fas fa-hospital"></i> Find Nearby Hospitals</button>
+          <button class="btn btn-outline" onclick="showPage('wellness')"><i class="fas fa-apple-whole"></i> View Wellness Plan</button>
+        </div>
+      </div>`;
+  }
+
+  else if (currentDashTab === 'profile') {
+    content.innerHTML = `
+      <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700;margin-bottom:20px">Health Profile</h2>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:20px"><i class="fas fa-user" style="color:var(--teal)"></i> Personal Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name</label><input type="text" value="${u.name}" id="edit_name"></div>
+          <div class="form-group"><label>Age</label><input type="number" value="${u.age}" id="edit_age"></div>
+          <div class="form-group"><label>Phone</label><input type="tel" value="${u.phone}" id="edit_phone"></div>
+          <div class="form-group"><label>Gender</label><select id="edit_gender"><option ${u.gender==='Male'?'selected':''}>Male</option><option ${u.gender==='Female'?'selected':''}>Female</option><option ${u.gender==='Other'?'selected':''}>Other</option></select></div>
+          <div class="form-group"><label>Height (cm)</label><input type="number" value="${u.height||''}" id="edit_height"></div>
+          <div class="form-group"><label>Weight (kg)</label><input type="number" value="${u.weight||''}" id="edit_weight"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px"><i class="fas fa-droplet" style="color:var(--red)"></i> Blood Group</div>
+        <div class="blood-group-grid">
+          ${['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(g => `<button class="blood-btn ${u.bloodGroup===g?'selected':''}" onclick="updateBlood(this,'${g}')">${g.replace('-','−')}</button>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px"><i class="fas fa-heart-pulse" style="color:var(--red)"></i> Medical Conditions</div>
+        <div class="conditions-grid">
+          ${['Diabetes (Type 1)','Diabetes (Type 2)','Heart Disease','Hypertension','Asthma','Epilepsy','Kidney Disease','Thyroid Disorder','Arthritis','Cancer','Blood Pressure','None'].map(c => 
+            `<label class="condition-chip ${(u.conditions||[]).includes(c)?'selected':''}"><input type="checkbox" value="${c}" ${(u.conditions||[]).includes(c)?'checked':''} onchange="toggleCondition(this)"><i class="fas fa-circle"></i> ${c}</label>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px"><i class="fas fa-pills" style="color:var(--purple)"></i> Medical Details</div>
+        <div class="form-grid">
+          <div class="form-group full"><label>Known Allergies</label><input type="text" value="${u.allergies||''}" id="edit_allergies"></div>
+          <div class="form-group full"><label>Current Medications</label><textarea id="edit_medications">${u.medications||''}</textarea></div>
+          <div class="form-group full"><label>Primary Doctor</label><input type="text" value="${u.doctor||''}" id="edit_doctor"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>`;
+  }
+
+  else if (currentDashTab === 'qr') {
+    content.innerHTML = `
+      <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700;margin-bottom:20px">Emergency QR Code</h2>
+      <div class="notif notif-warn" style="margin-bottom:20px">
+        <i class="fas fa-triangle-exclamation"></i>
+        <p><strong>Keep this accessible!</strong> Save this QR code on your phone's lock screen, print it on a card, or wear it as a medical bracelet. Doctors can scan it without requiring an internet account.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:36px;">
+          <div id="qrcode"></div>
+          <div style="margin-top:16px;text-align:center">
+            <div style="font-weight:700;font-size:16px">${u.name}</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px">ID: ${u.id || 'HG-2025-DEMO'}</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:20px">
+            <button class="btn btn-primary btn-sm" onclick="printQR()"><i class="fas fa-print"></i> Print</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadQR()"><i class="fas fa-download"></i> Save</button>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="background:var(--navy);color:white;border-color:transparent">
+            <div style="font-weight:700;font-size:15px;margin-bottom:16px;color:#e2e8f0">📋 Information in QR Code</div>
+            <div class="qr-field"><span class="qr-field-label">Patient Name</span><span class="qr-field-val">${u.name}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Blood Group</span><span class="qr-field-val" style="color:#ff8a93;font-size:18px">🩸 ${u.bloodGroup}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Age / Gender</span><span class="qr-field-val">${u.age} yr · ${u.gender||'N/A'}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Conditions</span><span class="qr-field-val">${(u.conditions||[]).filter(c=>c!=='None').join(', ')||'None'}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Allergies</span><span class="qr-field-val" style="color:#fcd34d">${u.allergies||'None'}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Medications</span><span class="qr-field-val">${(u.medications||'None').split('\n')[0]}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Emergency 1</span><span class="qr-field-val">${(u.emergencyContacts||[])[0]?.name||'N/A'} · ${(u.emergencyContacts||[])[0]?.phone||''}</span></div>
+            <div class="qr-field"><span class="qr-field-label">Emergency 2</span><span class="qr-field-val">${(u.emergencyContacts||[])[1]?.name||'N/A'} · ${(u.emergencyContacts||[])[1]?.phone||''}</span></div>
+          </div>
+          <div class="notif notif-info" style="margin-top:12px">
+            <i class="fas fa-circle-info"></i>
+            <p>Doctors can scan this QR code even without an internet connection. The information is encoded directly in the code.</p>
+          </div>
+        </div>
+      </div>`;
+    setTimeout(() => generateQR(), 100);
+  }
+
+  else if (currentDashTab === 'contacts') {
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700">Emergency Contacts</h2>
+        <button class="btn btn-primary" onclick="openModal('addContactModal')"><i class="fas fa-plus"></i> Add Contact</button>
+      </div>
+      <div class="notif notif-info" style="margin-bottom:20px">
+        <i class="fas fa-info-circle"></i>
+        <p>In an emergency, if you cannot speak, a doctor or paramedic can use these contacts to reach your loved ones immediately. Keep this list updated.</p>
+      </div>
+      <div class="card">
+        ${(u.emergencyContacts||[]).map((c,i) => `
+          <div class="contact-card">
+            <div class="contact-avatar">${c.name.charAt(0)}</div>
+            <div class="contact-info">
+              <h4>${c.name}</h4>
+              <p>${c.relation} · ${c.phone}</p>
+            </div>
+            <div class="contact-actions">
+              <a href="tel:${c.phone}" class="icon-btn call" title="Call"><i class="fas fa-phone"></i></a>
+              <button class="icon-btn" title="Remove" onclick="removeContact(${i})"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>`).join('') || '<p style="color:var(--muted);text-align:center;padding:24px">No emergency contacts added yet. Add at least one!</p>'}
+      </div>
+      <div style="background:var(--amber-light);border:1px solid #fcd34d;border-radius:14px;padding:20px;margin-top:16px">
+        <div style="font-weight:700;margin-bottom:8px;color:#92400e">⚡ National Emergency Numbers</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${[['112','National Emergency'],['102','Ambulance'],['101','Fire'],['100','Police'],['104','Health Helpline'],['108','Emergency (South India)']].map(([n,l])=>
+            `<a href="tel:${n}" style="display:flex;align-items:center;gap:8px;background:white;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;color:var(--navy);text-decoration:none;border:1px solid rgba(0,0,0,0.1)"><i class="fas fa-phone" style="color:var(--red)"></i>${n} – ${l}</a>`
+          ).join('')}
+        </div>
+      </div>`;
+  }
+}
+
+function updateBlood(btn, g) {
+  document.querySelectorAll('.blood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentUser.bloodGroup = g;
+}
+
+function toggleCondition(cb) {
+  const chip = cb.parentElement;
+  chip.classList.toggle('selected', cb.checked);
+  if (!currentUser.conditions) currentUser.conditions = [];
+  if (cb.checked) { if (!currentUser.conditions.includes(cb.value)) currentUser.conditions.push(cb.value); }
+  else { currentUser.conditions = currentUser.conditions.filter(c => c !== cb.value); }
+}
+
+function saveProfile() {
+  currentUser.name = document.getElementById('edit_name')?.value || currentUser.name;
+  currentUser.age = document.getElementById('edit_age')?.value || currentUser.age;
+  currentUser.phone = document.getElementById('edit_phone')?.value || currentUser.phone;
+  currentUser.gender = document.getElementById('edit_gender')?.value || currentUser.gender;
+  currentUser.height = document.getElementById('edit_height')?.value || currentUser.height;
+  currentUser.weight = document.getElementById('edit_weight')?.value || currentUser.weight;
+  currentUser.allergies = document.getElementById('edit_allergies')?.value || currentUser.allergies;
+  currentUser.medications = document.getElementById('edit_medications')?.value || currentUser.medications;
+  currentUser.doctor = document.getElementById('edit_doctor')?.value || currentUser.doctor;
+  showToast('Health profile saved successfully! ✅', 'success');
+}
+
+function removeContact(i) {
+  currentUser.emergencyContacts.splice(i, 1);
+  renderDashboard();
+  showToast('Contact removed', 'info');
+}
+
+// ============================================================
+// QR CODE
+// ============================================================
+function generateQR() {
+  const el = document.getElementById('qrcode');
+  if (!el || !currentUser) return;
+  el.innerHTML = '';
+  const data = JSON.stringify({
+    name: currentUser.name, age: currentUser.age, gender: currentUser.gender,
+    bloodGroup: currentUser.bloodGroup, conditions: currentUser.conditions,
+    allergies: currentUser.allergies, medications: currentUser.medications,
+    emergencyContacts: currentUser.emergencyContacts, id: currentUser.id, doctor: currentUser.doctor
+  });
+  try {
+    new QRCode(el, { text: data, width: 220, height: 220, colorDark: '#0F172A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  } catch(e) {
+    el.innerHTML = `<div style="width:220px;height:220px;background:var(--bg);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--border);"><i class="fas fa-qrcode" style="font-size:60px;color:var(--navy)"></i><div style="margin-top:10px;font-size:12px;color:var(--muted)">QR Code Generated</div></div>`;
+  }
+}
+
+function printQR() {
+  const el = document.getElementById('qrcode');
+  const canvas = el.querySelector('canvas');
+  if (!canvas) { showToast('QR code not ready', 'error'); return; }
+  const win = window.open('');
+  win.document.write(`<html><body style="text-align:center;font-family:sans-serif;padding:40px">
+    <h2 style="color:#E63946">HealthGuard Emergency ID</h2>
+    <p style="color:#64748b;font-size:14px">Scan this QR code for complete medical information</p>
+    <img src="${canvas.toDataURL()}" style="width:240px;margin:20px auto;display:block">
+    <h3>${currentUser.name}</h3>
+    <p style="font-size:18px;font-weight:bold;color:#E63946">Blood Group: ${currentUser.bloodGroup}</p>
+    <p>Emergency: ${(currentUser.emergencyContacts||[])[0]?.phone || 'N/A'}</p>
+    <p style="font-size:12px;color:#94a3b8;margin-top:20px">ID: ${currentUser.id||'HG-DEMO'}</p>
+    </body></html>`);
+  win.print();
+}
+
+function downloadQR() {
+  const canvas = document.getElementById('qrcode')?.querySelector('canvas');
+  if (!canvas) { showToast('QR code not ready yet', 'error'); return; }
+  const link = document.createElement('a');
+  link.download = 'HealthGuard-QR-' + currentUser.name.replace(' ','-') + '.png';
+  link.href = canvas.toDataURL();
+  link.click();
+  showToast('QR Code downloaded!', 'success');
+}
+
+// ============================================================
+// HOSPITALS
+// ============================================================
+const HOSPITAL_DATA = [
+  { name: 'All India Institute of Medical Sciences (AIIMS)', type: 'government', specialty: ['cardiac','emergency','trauma'], phone: '011-26588500', rating: 4.8, beds: 2478 },
+  { name: 'Safdarjung Hospital', type: 'government', specialty: ['emergency','trauma'], phone: '011-26707444', rating: 4.5, beds: 1531 },
+  { name: 'Ram Manohar Lohia Hospital', type: 'government', specialty: ['emergency'], phone: '011-23365525', rating: 4.3, beds: 1200 },
+  { name: 'Apollo Hospital', type: 'private', specialty: ['cardiac','emergency'], phone: '1860-500-1066', rating: 4.7, beds: 710 },
+  { name: 'Fortis Memorial Research Institute', type: 'private', specialty: ['cardiac','emergency','trauma'], phone: '1800-111-3011', rating: 4.6, beds: 1000 },
+  { name: 'Max Super Speciality Hospital', type: 'private', specialty: ['emergency','cardiac'], phone: '011-26515050', rating: 4.5, beds: 500 },
+  { name: 'GTB Hospital (Guru Teg Bahadur)', type: 'government', specialty: ['emergency','trauma'], phone: '011-22582424', rating: 4.2, beds: 1508 },
+  { name: 'Medanta – The Medicity', type: 'private', specialty: ['cardiac','emergency'], phone: '0124-4141414', rating: 4.7, beds: 1250 },
+  { name: 'Maulana Azad Medical College & Hospital', type: 'government', specialty: ['emergency'], phone: '011-23239271', rating: 4.3, beds: 1800 },
+  { name: 'Sir Ganga Ram Hospital', type: 'private', specialty: ['cardiac','emergency','trauma'], phone: '011-25750000', rating: 4.6, beds: 675 },
+];
+
+function getLocation() {
+  document.getElementById('locationStatus').style.display = 'flex';
+  document.getElementById('locationText').textContent = 'Detecting your location...';
+  if (!navigator.geolocation) { showToast('Geolocation not supported', 'error'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    document.getElementById('locationText').textContent = `📍 Location found: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    showMapWithLocation(lat, lng);
+    renderHospitals();
+    showToast('Location detected! Showing nearby hospitals.', 'success');
+  }, () => {
+    document.getElementById('locationText').textContent = '📍 Using default location (Delhi)';
+    showToast('Could not get precise location. Showing hospitals in Delhi.', 'info');
+    showMapWithLocation(28.6139, 77.2090);
+    renderHospitals();
+  });
+}
+
+function showMapWithLocation(lat, lng) {
+  const mapEl = document.getElementById('map');
+  mapEl.innerHTML = `<iframe 
+    src="https://www.google.com/maps/embed/v1/search?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&q=hospitals+near+me&center=${lat},${lng}&zoom=13" 
+    width="100%" height="400" style="border:none;border-radius:16px" allowfullscreen loading="lazy"
+    onerror="this.parentElement.innerHTML='<div class=map-placeholder><i class=fas fa-map-location-dot></i><div>Map preview (Google Maps API key needed for live map)</div><a href=https://www.google.com/maps/search/hospitals+near+${lat},${lng} target=_blank class=btn btn-teal style=margin-top:12px><i class=fas fa-external-link></i> Open in Google Maps</a></div>'">
+  </iframe>`;
+  // Provide a direct link fallback
+  setTimeout(() => {
+    const iframe = mapEl.querySelector('iframe');
+    if (iframe) {
+      const link = document.createElement('div');
+      link.style.cssText = 'text-align:center;margin-top:10px;';
+      link.innerHTML = `<a href="https://www.google.com/maps/search/hospitals+near+${lat},${lng}" target="_blank" class="btn btn-teal btn-sm"><i class="fas fa-map-location-dot"></i> Open Full Map in Google Maps</a>`;
+      mapEl.parentElement.insertBefore(link, mapEl.nextSibling);
+    }
+  }, 500);
+}
+
+function filterHospitals(filter) {
+  hospitalFilter = filter;
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  renderHospitals();
+}
+
+function renderHospitals() {
+  let data = HOSPITAL_DATA;
+  if (hospitalFilter !== 'all') {
+    if (hospitalFilter === 'government') data = data.filter(h => h.type === 'government');
+    else if (hospitalFilter === 'private') data = data.filter(h => h.type === 'private');
+    else data = data.filter(h => h.specialty.includes(hospitalFilter));
+  }
+  // Assign fake distances
+  const withDist = data.map((h, i) => ({ ...h, dist: (0.8 + i * 0.7 + Math.random()).toFixed(1) })).sort((a,b) => a.dist - b.dist);
+  document.getElementById('hospitalList').innerHTML = withDist.map(h => `
+    <div class="hospital-card">
+      <div class="hospital-icon ${h.type==='government'?'hosp-govt':'hosp-private'}">
+        <i class="fas fa-${h.type==='government'?'landmark':'building-medical'}"></i>
+      </div>
+      <div class="hospital-info">
+        <h4>${h.name}</h4>
+        <p>${h.specialty.map(s => s.charAt(0).toUpperCase()+s.slice(1)).join(' · ')}</p>
+        <div class="hospital-meta">
+          <span class="badge ${h.type==='government'?'badge-govt':'badge-private'}">${h.type==='government'?'Government':'Private'}</span>
+          <span class="badge badge-dist"><i class="fas fa-location-dot"></i> ~${h.dist} km</span>
+          <span class="badge badge-open"><i class="fas fa-circle"></i> 24×7 Open</span>
+          <span style="font-size:12px;color:var(--amber)">★ ${h.rating}</span>
+          <span style="font-size:12px;color:var(--muted)">${h.beds} beds</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(h.name)}" target="_blank" class="nav-btn"><i class="fas fa-location-arrow"></i> Navigate</a>
+        <a href="tel:${h.phone}" class="nav-btn" style="background:var(--green)"><i class="fas fa-phone"></i> Call</a>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// WELLNESS PLANS
+// ============================================================
+function showWellnessTab(tab) {
+  currentWellnessTab = tab;
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  renderWellness();
+}
+
+function renderWellness() {
+  if (!currentUser) return;
+  const u = currentUser;
+  const conditions = (u.conditions||[]).filter(c=>c!=='None');
+  const hasDiabetes = conditions.some(c=>c.includes('Diabetes'));
+  const hasHeart = conditions.some(c=>c.includes('Heart'));
+  const hasBP = conditions.some(c=>c.includes('Hypertension')||c.includes('Blood Pressure'));
+  const noConditions = conditions.length === 0;
+
+  const dietPlan = noConditions ? [
+    {title:'Breakfast (7-8 AM)', items:['1 cup oatmeal with fruits + nuts','2 boiled eggs or paneer','Green tea / black coffee (no sugar)'], time:'20 min prep'},
+    {title:'Mid-Morning (10-11 AM)', items:['1 seasonal fruit (apple, banana, or papaya)','10 almonds or walnuts'], time:'5 min'},
+    {title:'Lunch (1-2 PM)', items:['2 whole grain rotis + mixed sabzi','1 cup dal or rajma','Salad (cucumber, tomato, onion)','1 cup curd'], time:'30 min prep'},
+    {title:'Evening Snack (4-5 PM)', items:['Roasted chana or makhana','Buttermilk or coconut water'], time:'5 min'},
+    {title:'Dinner (7-8 PM)', items:['Brown rice or 2 rotis','Vegetable curry','Light dal or soup'], time:'30 min prep'},
+  ] : hasDiabetes ? [
+    {title:'Breakfast (7-8 AM)', items:['Methi or spinach stuffed roti (2 small)','1 egg white omelette','Black coffee / green tea (no sugar)','1 small glass buttermilk'], time:'25 min prep'},
+    {title:'Mid-Morning (10 AM)', items:['5 almonds + 2 walnuts','1 small guava or 1/2 apple (low GI fruits only)'], time:'5 min'},
+    {title:'Lunch (1 PM)', items:['1 cup brown rice or 2 bajra rotis','Palak/methi sabzi (no potato)','1 cup moong dal','Salad without dressing'], time:'30 min prep'},
+    {title:'Evening Snack (4-5 PM)', items:['Roasted chana (handful)','Cucumber slices with lemon','Herbal / green tea (no sugar)'], time:'5 min'},
+    {title:'Dinner (7-8 PM)', items:['1-2 multigrain rotis','Light sabzi (avoid starchy vegetables)','Clear vegetable soup'], time:'25 min prep'},
+  ] : hasHeart || hasBP ? [
+    {title:'Breakfast (7-8 AM)', items:['Oatmeal with berries (no salt added)','2 egg whites','Low-sodium whole grain toast','Warm lemon water'], time:'20 min prep'},
+    {title:'Mid-Morning (10 AM)', items:['1 banana (potassium-rich)','8 unsalted almonds'], time:'5 min'},
+    {title:'Lunch (1 PM)', items:['Brown rice with dal (less salt)','Steamed vegetables','Salad with olive oil dressing','Low-fat curd'], time:'30 min prep'},
+    {title:'Evening Snack (4 PM)', items:['Unsalted peanuts or flaxseeds','Amla juice (natural BP control)','Herbal tea'], time:'5 min'},
+    {title:'Dinner (7-8 PM)', items:['Grilled fish or tofu','Steamed vegetables','Lentil soup (low sodium)','No fried foods'], time:'30 min prep'},
+  ] : [
+    {title:'Breakfast', items:['Whole grain options','Protein-rich foods','Fresh fruits'], time:'20 min'},
+    {title:'Lunch', items:['Balanced meal with vegetables','Protein & complex carbs'], time:'30 min'},
+    {title:'Dinner', items:['Light meal','Avoid heavy carbs at night'], time:'25 min'},
+  ];
+
+  const exercisePlan = hasHeart || hasBP ? [
+    {title:'Morning Walk (6-7 AM)', desc:'30-minute brisk walk at moderate pace. Keep heart rate between 100-120 bpm. Avoid hills or strenuous terrain.', time:'30 min', icon:'🚶', intensity:'Low-Moderate'},
+    {title:'Gentle Yoga (7:30 AM)', desc:'Pranayama (deep breathing), Anulom Vilom, Bhramari. These reduce blood pressure naturally.', time:'20 min', icon:'🧘', intensity:'Low'},
+    {title:'Afternoon Stretching', desc:'Light stretching exercises. Neck rolls, shoulder circles, gentle back bends. Improves circulation.', time:'15 min', icon:'🤸', intensity:'Low'},
+    {title:'Evening Walk (6 PM)', desc:'15-20 minute slow walk after dinner. Aids digestion and lowers evening BP readings.', time:'20 min', icon:'🌅', intensity:'Low'},
+  ] : hasDiabetes ? [
+    {title:'Morning Walk (6-7 AM)', desc:'45-minute brisk walk. Walking post-meal helps lower blood sugar levels significantly. Carry glucose tablets.', time:'45 min', icon:'🚶', intensity:'Moderate'},
+    {title:'Resistance Training (Alternate Days)', desc:'Light weights or resistance bands. Builds muscle which absorbs glucose more effectively.', time:'30 min', icon:'💪', intensity:'Moderate'},
+    {title:'Post-Lunch Walk (2 PM)', desc:'15-minute slow walk right after lunch. Proven to reduce post-meal glucose spike by 30-40%.', time:'15 min', icon:'🚶‍♀️', intensity:'Low'},
+    {title:'Yoga (Evening)', desc:'Surya Namaskar (6-8 rounds), Trikonasana, Virabhadrasana. These asanas specifically help glucose metabolism.', time:'30 min', icon:'🧘', intensity:'Moderate'},
+    {title:'Swimming (Weekends)', desc:'1 hour of swimming – excellent low-impact cardio that improves insulin sensitivity.', time:'60 min', icon:'🏊', intensity:'Moderate'},
+  ] : [
+    {title:'Morning Run / Walk (6-7 AM)', desc:'30-45 minute jog or brisk walk. Start with walking if new to exercise, build up over 2 weeks.', time:'45 min', icon:'🏃', intensity:'Moderate'},
+    {title:'Strength Training (3x/week)', desc:'Full body workout: squats, pushups, plank, lunges. Focus on compound movements for max benefit.', time:'40 min', icon:'💪', intensity:'Moderate-High'},
+    {title:'Yoga / Flexibility (Evenings)', desc:'Surya Namaskar, hip openers, spinal twists. 20-30 minutes for flexibility and stress reduction.', time:'25 min', icon:'🧘', intensity:'Low'},
+    {title:'Weekend Activity', desc:'Cycling, swimming, sports, hiking. Fun physical activity to keep you motivated and social.', time:'60 min', icon:'🚴', intensity:'Variable'},
+  ];
+
+  const meditationPlan = [
+    {title:'Morning Mindfulness (7 AM)', desc:'5-10 minutes of focused breathing before checking your phone. Sit comfortably, close eyes, focus only on your breath. When mind wanders, gently return.', time:'10 min', icon:'🌅'},
+    {title:'Anulom Vilom Pranayama', desc:`Alternate nostril breathing. ${hasBP ? 'Clinically proven to reduce systolic BP by 5-10 mmHg with regular practice. ' : ''}Close right nostril, inhale left. Close left, exhale right. 5-10 minutes daily.`, time:'10 min', icon:'🌬️'},
+    {title:'Body Scan Meditation (Before Sleep)', desc:'Lie down, close eyes. Slowly bring awareness from toes to head. Notice tension and consciously release it. Improves sleep quality dramatically.', time:'15 min', icon:'🌙'},
+    {title:'Gratitude Journaling', desc:'Write 3 things you are grateful for every morning. Simple but powerful – reduces cortisol (stress hormone) and improves mental resilience.', time:'5 min', icon:'📓'},
+    {title:'Bhramari (Humming Bee Breath)', desc:`${hasHeart || hasBP ? 'Excellent for heart patients. ' : ''}Close ears with thumbs, inhale deep, exhale with a humming sound. Activates vagus nerve, calming the nervous system.`, time:'5 min', icon:'🐝'},
+  ];
+
+  const wellnessEl = document.getElementById('wellnessContent');
+  if (!wellnessEl) return;
+
+  const conditionNote = conditions.length > 0 
+    ? `<div class="notif notif-warn" style="margin-bottom:20px"><i class="fas fa-triangle-exclamation"></i><p><strong>Personalized for your conditions:</strong> ${conditions.join(', ')}. Always consult your doctor before starting any new diet or exercise program.</p></div>`
+    : `<div class="notif notif-info" style="margin-bottom:20px"><i class="fas fa-leaf"></i><p><strong>General Wellness Plan</strong> Since you have no major health conditions, here's a balanced plan for overall health and fitness.</p></div>`;
+
+  const tabs = `<div class="plan-tabs">
+    <button class="plan-tab ${currentWellnessTab==='diet'?'active':''}" onclick="showWellnessTab('diet')"><i class="fas fa-apple-whole"></i> Diet Plan</button>
+    <button class="plan-tab ${currentWellnessTab==='exercise'?'active':''}" onclick="showWellnessTab('exercise')"><i class="fas fa-dumbbell"></i> Exercise Plan</button>
+    <button class="plan-tab ${currentWellnessTab==='meditation'?'active':''}" onclick="showWellnessTab('meditation')"><i class="fas fa-spa"></i> Meditation</button>
+  </div>`;
+
+  let tabContent = '';
+  if (currentWellnessTab === 'diet') {
+    tabContent = dietPlan.map((m, i) => `
+      <div class="plan-item">
+        <div class="plan-num">${String.fromCharCode(65+i)}</div>
+        <div>
+          <h4>${m.title}</h4>
+          <ul style="color:var(--muted);font-size:13px;padding-left:16px;margin-top:4px;line-height:1.8">${m.items.map(item=>`<li>${item}</li>`).join('')}</ul>
+          <div class="time-badge"><i class="fas fa-clock"></i> ${m.time}</div>
+        </div>
+      </div>`).join('');
+    tabContent = `<div class="card"><div class="card-title" style="margin-bottom:4px"><i class="fas fa-apple-whole" style="color:var(--green)"></i> ${hasDiabetes?'Diabetes':'Heart-Healthy'} ${conditions.length>0?'':'General'} Diet Plan</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:20px">Caloric target: ~${hasDiabetes?'1600-1800':hasHeart||hasBP?'1800-2000':'2000-2200'} kcal/day</div>
+      ${tabContent}</div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px"><i class="fas fa-ban" style="color:var(--red)"></i> Foods to Avoid</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${(hasDiabetes?['White rice & refined flour','Sugary drinks & juices','Deep fried foods','Sweets & mithai','High-sugar fruits (mango, chikoo)','Processed & packaged foods']:
+             hasHeart||hasBP?['Excessive salt & salty snacks','Fried & fatty foods','Red meat (frequent)','Full-fat dairy','Pickles & preserved foods','Alcohol & smoking']:
+             ['Excessive junk food','Sugary sodas','Fried snacks daily','Skipping meals','Late-night heavy meals','Excess processed sugar']
+          ).map(f=>`<div style="background:var(--red-light);color:var(--red);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:500">❌ ${f}</div>`).join('')}
+        </div>
+      </div>`;
+  } else if (currentWellnessTab === 'exercise') {
+    tabContent = exercisePlan.map(e => `
+      <div class="plan-item">
+        <div class="plan-num" style="font-size:18px;background:var(--teal-light)">${e.icon}</div>
+        <div style="flex:1">
+          <h4>${e.title}</h4>
+          <p>${e.desc}</p>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <div class="time-badge"><i class="fas fa-clock"></i> ${e.time}</div>
+            <div class="time-badge" style="background:var(--purple-light);color:var(--purple)"><i class="fas fa-gauge"></i> ${e.intensity}</div>
+          </div>
+        </div>
+      </div>`).join('');
+    tabContent = `<div class="card"><div class="card-title" style="margin-bottom:4px"><i class="fas fa-dumbbell" style="color:var(--teal)"></i> Personalized Exercise Plan</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:20px">${hasHeart||hasBP?'Low-impact, heart-safe exercises':hasDiabetes?'Blood sugar management focused':'Full fitness program'}</div>
+      ${tabContent}</div>
+      <div class="notif notif-warn"><i class="fas fa-triangle-exclamation"></i><p><strong>Important:</strong> ${hasHeart||hasBP?'Never exercise alone if you have heart disease. Keep nitroglycerin or prescribed medication during workouts.':hasDiabetes?'Check blood sugar before & after exercise. Eat a small snack if below 100 mg/dL before working out.':'Listen to your body. Rest when needed. Stay hydrated.'}</p></div>`;
+  } else {
+    tabContent = meditationPlan.map(m => `
+      <div class="plan-item">
+        <div class="plan-num" style="font-size:20px;background:var(--purple-light)">${m.icon}</div>
+        <div>
+          <h4>${m.title}</h4>
+          <p>${m.desc}</p>
+          <div class="time-badge" style="background:var(--purple-light);color:var(--purple)"><i class="fas fa-clock"></i> ${m.time}</div>
+        </div>
+      </div>`).join('');
+    tabContent = `<div class="card"><div class="card-title" style="margin-bottom:4px"><i class="fas fa-spa" style="color:var(--purple)"></i> Meditation & Mindfulness</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:20px">Daily practices for mental & physical wellbeing</div>
+      ${tabContent}</div>`;
+  }
+
+  wellnessEl.innerHTML = `
+    <h2 style="font-family:'Sora',sans-serif;font-size:24px;font-weight:700;margin-bottom:16px">Wellness Plan</h2>
+    ${conditionNote}${tabs}${tabContent}`;
+}
+
+// ============================================================
+// CONTACT MANAGEMENT
+// ============================================================
+function saveNewContact() {
+  const name = document.getElementById('nc_name').value.trim();
+  const phone = document.getElementById('nc_phone').value.trim();
+  const rel = document.getElementById('nc_rel').value;
+  if (!name || !phone) { showToast('Name and phone number are required', 'error'); return; }
+  if (!currentUser.emergencyContacts) currentUser.emergencyContacts = [];
+  if (currentUser.emergencyContacts.length >= 5) { showToast('Maximum 5 contacts allowed', 'error'); return; }
+  currentUser.emergencyContacts.push({ name, phone, relation: rel });
+  closeModal('addContactModal');
+  showToast('Emergency contact added!', 'success');
+  renderDashboard();
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.classList.remove('open'); document.body.style.overflow=''; }});
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type='info') {
+  const icons = { success: 'fa-check-circle', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${icons[type]}"></i> ${msg}`;
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// ============================================================
+// CONDITION CHIP CLICKS
+// ============================================================
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.condition-chip');
+  if (chip) {
+    const cb = chip.querySelector('input[type=checkbox]');
+    if (cb) { cb.checked = !cb.checked; chip.classList.toggle('selected', cb.checked); }
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = () => {
+  showPage('home');
+};
+</script>
+</body>
+</html>
